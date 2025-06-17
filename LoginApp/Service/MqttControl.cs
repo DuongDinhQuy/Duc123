@@ -1,27 +1,27 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using MQTT;
 
 namespace LoginApp.Service
 {
-    public class MQTTControlService
+    public class MQTTControl
     {
         private readonly MQTTDeviceClient mqttClient;
         private readonly string controlTopic;
 
-        // Sự kiện thông báo kết quả gửi lệnh (có thể mở rộng thêm phản hồi từ thiết bị)
         public event Action<string>? OnCommandSent;
         public event Action<string>? OnError;
 
         public bool IsConnected { get; private set; } = false;
 
         public MQTTControlService(
+            string userId,
             string brokerAddress = "broker.emqx.io",
             int brokerPort = 8883,
-            string controlTopic = "duc/relay",
             string clientId = "maui-control-client")
         {
-            this.controlTopic = controlTopic;
+            // Kênh điều khiển: "UserId/Device"
+            controlTopic = $"{userId}/Device";
 
             mqttClient = new MQTTDeviceClient(
                 brokerAddress: brokerAddress,
@@ -31,7 +31,6 @@ namespace LoginApp.Service
             );
         }
 
-        // Kết nối tới MQTT broker
         public async Task StartAsync(string? username = null, string? password = null)
         {
             try
@@ -48,7 +47,6 @@ namespace LoginApp.Service
             }
         }
 
-        // Ngắt kết nối
         public async Task StopAsync()
         {
             try
@@ -66,19 +64,19 @@ namespace LoginApp.Service
             }
         }
 
-        // Gửi lệnh bật/tắt relay (không phân biệt relay nào)
-        public async Task SendRelayCommandAsync(bool state)
+        // Gửi lệnh đến thiết bị (pump, light, ...)
+        public async Task SendDeviceCommandAsync(string cmd, bool state)
         {
             if (!IsConnected)
                 throw new InvalidOperationException("Chưa kết nối MQTT broker.");
 
             try
             {
-                // Gửi lệnh "relay" với giá trị true (on)/false (off)
-                await mqttClient.SendCommandAsync("relay", state);
+                // value: 1 (on), 0 (off)
+                await mqttClient.SendCommandAsync(cmd, state ? 1 : 0);
 
-                Console.WriteLine($"[MQTTControlService] Đã gửi lệnh relay: {(state ? "ON" : "OFF")}");
-                OnCommandSent?.Invoke($"Relay: {(state ? "ON" : "OFF")}");
+                Console.WriteLine($"[MQTTControlService] Đã gửi lệnh {cmd}: {(state ? "ON" : "OFF")}");
+                OnCommandSent?.Invoke($"{cmd}: {(state ? "ON" : "OFF")}");
             }
             catch (Exception ex)
             {

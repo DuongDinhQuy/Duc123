@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Text;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MQTT
 {
-    public class MQTTDeviceClient
+    public class MQTT
     {
         private TcpClient client;
         private SslStream sslStream;
@@ -16,8 +16,8 @@ namespace MQTT
         private string broker;
         private int port;
 
-        // Vì gói tin không có "id" và "water", ta chỉ dùng temp và hum
-        public event Action<double, double> OnSensorDataReceived;
+        // Thông số cảm biến: temp, hum, waterlevel
+        public event Action<double, double, double> OnSensorDataReceived;
 
         public MQTTDeviceClient(string brokerAddress, int brokerPort, string topic, string clientId)
         {
@@ -124,8 +124,11 @@ namespace MQTT
 
                                 double temp = json.RootElement.GetProperty("Temp").GetDouble();
                                 double hum = json.RootElement.GetProperty("humidity").GetDouble();
+                                double waterlevel = json.RootElement.TryGetProperty("waterlevel", out var waterProp)
+                                    ? waterProp.GetDouble()
+                                    : 0.0;
 
-                                OnSensorDataReceived?.Invoke(temp, hum);
+                                OnSensorDataReceived?.Invoke(temp, hum, waterlevel);
                             }
                             catch (Exception ex)
                             {
@@ -145,12 +148,13 @@ namespace MQTT
             }
         }
 
-        public async Task SendCommandAsync(string device, bool state)
+        // Gửi lệnh điều khiển: cmd (pump, light, ...) và value (1/0)
+        public async Task SendCommandAsync(string cmd, int value)
         {
             var command = new
             {
-                cmd = device,
-                value = state ? 1 : 0
+                cmd = cmd,
+                value = value
             };
             string json = JsonSerializer.Serialize(command);
             var publishPacket = Packet.Publish(topic, Encoding.UTF8.GetBytes(json), 0, false);
