@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
+using LoginApp.Service;
 
 namespace LoginApp
 {
@@ -16,15 +17,15 @@ namespace LoginApp
             InitMqtt();
         }
 
-        private void InitMqtt()
+        private async void InitMqtt()
         {
             // Giả sử GlobalUserId được gán sau khi đăng nhập thành công
-            _mqttService = new MQTTService(GlobalUserId);
+            _mqttService = new MQTTService(Globals.GlobalUserId);
             _mqttService.SensorDataReceived += MqttService_SensorDataReceived;
-            _mqttService.Connect(); // Hoặc Start, tuỳ vào code của bạn
+            await _mqttService.StartAsync(); // Kết nối MQTT
         }
 
-        private async void MqttService_SensorDataReceived(object sender, SensorDataEventArgs e)
+        private async void MqttService_SensorDataReceived(object? sender, SensorDataEventArgs e)
         {
             // Cập nhật UI
             MainThread.BeginInvokeOnMainThread(() =>
@@ -45,7 +46,7 @@ namespace LoginApp
                 var httpClient = new HttpClient();
                 var sensorData = new
                 {
-                    UserId = GlobalUserId,
+                    UserId = Globals.GlobalUserId,
                     Temperature = sensor.Temperature,
                     Humidity = sensor.Humidity,
                     WaterLevel = sensor.WaterLevel,
@@ -63,11 +64,7 @@ namespace LoginApp
         }
     }
 
-    // Bạn cần bổ sung/global biến này ở đâu đó:
-    public static class Globals
-    {
-        public static string GlobalUserId = ""; // Gán khi đăng nhập thành công!
-    }
+    
 
     // Định nghĩa EventArgs nếu file MQTTService của bạn chưa có:
     public class SensorDataEventArgs : EventArgs

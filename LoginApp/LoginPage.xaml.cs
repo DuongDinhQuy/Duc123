@@ -32,7 +32,7 @@ namespace LoginApp
 
             try
             {
-                var apiUrl = "https://deaf-2001-ee0-4161-2458-2d35-74f3-4af9-385a.ngrok-free.app/api/auth/login";
+                var apiUrl = "https://9daa-2001-ee0-4161-2458-c801-7315-ac2a-dbf9.ngrok-free.app/api/Auth/login";
                 var loginRequest = new LoginRequestModel
                 {
                     Username = username,
@@ -49,11 +49,11 @@ namespace LoginApp
                     var loginResult = JsonSerializer.Deserialize<LoginResultModel>(json);
 
                     // Lưu UserId làm biến toàn cục
-                    GlobalUserId = loginResult.id;
+                    Globals.GlobalUserId = loginResult.id;
                     // Ngoài ra có thể lưu vào SecureStorage hoặc Preferences nếu cần
 
                     await DisplayAlert("Thành công", "Đăng nhập thành công!", "OK");
-                    await Navigation.PushAsync(new MainPage());
+                    await Navigation.PushAsync(new MenuPage());
                 }
                 else
                 {
