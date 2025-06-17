@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using MQTT;
 
@@ -8,21 +8,21 @@ namespace LoginApp.Service
     {
         private readonly MQTTDeviceClient client;
 
-        // Sự kiện truyền dữ liệu cảm biến: nhiệt độ, độ ẩm
-        public event Action<double, double>? OnSensorDataReceived;
-
-        // Sự kiện lỗi (mở rộng nếu cần)
+        // Sự kiện truyền dữ liệu cảm biến: nhiệt độ, độ ẩm, mực nước
+        public event Action<double, double, double>? OnSensorDataReceived;
         public event Action<string>? OnError;
 
-        // Trạng thái kết nối
         public bool IsConnected { get; private set; } = false;
 
         public MQTTService(
+            string userId,
             string brokerAddress = "broker.emqx.io",
             int brokerPort = 8883,
-            string topic = "hello/esp32",
             string clientId = "maui-client")
         {
+            // Kênh cảm biến: "UserId/Sensor"
+            string topic = $"{userId}/Sensor";
+
             client = new MQTTDeviceClient(
                 brokerAddress: brokerAddress,
                 brokerPort: brokerPort,
@@ -30,14 +30,12 @@ namespace LoginApp.Service
                 clientId: clientId
             );
 
-            // Gắn sự kiện nhận dữ liệu từ client
-            client.OnSensorDataReceived += (temp, hum) =>
+            client.OnSensorDataReceived += (temp, hum, waterlevel) =>
             {
-                OnSensorDataReceived?.Invoke(temp, hum);
+                OnSensorDataReceived?.Invoke(temp, hum, waterlevel);
             };
         }
 
-        // Kết nối tới MQTT broker, có thể truyền username/password nếu cần
         public async Task StartAsync(string? username = null, string? password = null)
         {
             try
@@ -55,7 +53,6 @@ namespace LoginApp.Service
             }
         }
 
-        // Ngắt kết nối khỏi broker
         public async Task StopAsync()
         {
             try
@@ -71,26 +68,6 @@ namespace LoginApp.Service
             {
                 OnError?.Invoke($"Lỗi khi ngắt kết nối MQTT: {ex.Message}");
                 Console.WriteLine($"[MQTTService] Lỗi khi ngắt kết nối MQTT: {ex.Message}");
-            }
-        }
-
-        // Gửi lệnh điều khiển thiết bị (VD: "pump", true/false)
-        public async Task SendCommandAsync(string device, bool state)
-        {
-            if (!IsConnected)
-            {
-                throw new InvalidOperationException("Chưa kết nối MQTT broker.");
-            }
-
-            try
-            {
-                await client.SendCommandAsync(device, state);
-                Console.WriteLine($"[MQTTService] Đã gửi lệnh: {device} = {state}");
-            }
-            catch (Exception ex)
-            {
-                OnError?.Invoke($"Lỗi khi gửi lệnh MQTT: {ex.Message}");
-                Console.WriteLine($"[MQTTService] Lỗi khi gửi lệnh MQTT: {ex.Message}");
             }
         }
     }
