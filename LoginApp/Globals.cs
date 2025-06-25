@@ -8,6 +8,6 @@
         /// <summary>
         /// UserId của user đã đăng nhập, gán khi đăng nhập thành công.
         /// </summary>
-        public static string GlobalUserId = "";
+        public static string GlobalUserId = "1";
     }
 }

@@ -59,6 +59,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<MauiXaml Update="DevicePage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="HistoryPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
 		<MauiXaml Update="LoginPage.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</MauiXaml>

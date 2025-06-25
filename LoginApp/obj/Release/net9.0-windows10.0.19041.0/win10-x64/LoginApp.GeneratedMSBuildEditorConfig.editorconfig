@@ -34,6 +34,18 @@ build_metadata.AdditionalFiles.ManifestResourceName = LoginApp.AppShell.xaml
 build_metadata.AdditionalFiles.TargetPath = AppShell.xaml
 build_metadata.AdditionalFiles.RelativePath = AppShell.xaml
 
+[D:/Duc123/LoginApp/DevicePage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = LoginApp.DevicePage.xaml
+build_metadata.AdditionalFiles.TargetPath = DevicePage.xaml
+build_metadata.AdditionalFiles.RelativePath = DevicePage.xaml
+
+[D:/Duc123/LoginApp/HistoryPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = LoginApp.HistoryPage.xaml
+build_metadata.AdditionalFiles.TargetPath = HistoryPage.xaml
+build_metadata.AdditionalFiles.RelativePath = HistoryPage.xaml
+
 [D:/Duc123/LoginApp/LoginPage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = LoginApp.LoginPage.xaml
@@ -45,6 +57,12 @@ build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = LoginApp.MainPage.xaml
 build_metadata.AdditionalFiles.TargetPath = MainPage.xaml
 build_metadata.AdditionalFiles.RelativePath = MainPage.xaml
+
+[D:/Duc123/LoginApp/MenuPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = LoginApp.MenuPage.xaml
+build_metadata.AdditionalFiles.TargetPath = MenuPage.xaml
+build_metadata.AdditionalFiles.RelativePath = MenuPage.xaml
 
 [D:/Duc123/LoginApp/Resources/Styles/Colors.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml

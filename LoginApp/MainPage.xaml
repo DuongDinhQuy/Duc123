@@ -19,7 +19,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <Label Text="Thanh Xuân"
+                    <Label Text="Vườn"
                            FontSize="22"
                            FontAttributes="Bold"
                            TextColor="White"
@@ -43,20 +43,6 @@
                                VerticalOptions="End"
                                Padding="0,0,0,18"/>
                     </StackLayout>
-                    <Label Text="Quang  33°/27°"
-                           FontSize="20"
-                           TextColor="White"
-                           HorizontalOptions="Center"/>
-                    <Frame BackgroundColor="#33FFFFFF"
-                           CornerRadius="18"
-                           Padding="10,2"
-                           HorizontalOptions="Center"
-                           Margin="0,10,0,0"
-                           HasShadow="False">
-                        <Label Text="AQI 65"
-                               FontSize="16"
-                               TextColor="White"/>
-                    </Frame>
                 </VerticalStackLayout>
                 <!-- Thông tin mực nước và độ ẩm -->
                 <HorizontalStackLayout Spacing="32" HorizontalOptions="Center" Margin="0,30,0,0">

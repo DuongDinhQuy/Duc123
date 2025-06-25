@@ -10,12 +10,12 @@
                 BackgroundColor="White"
                 TextColor="Black"/>
         <Button Text="Điều khiển thiết bị"
-              
+                Clicked='OnDeviceControlClicked'
                 FontSize="18"
                 BackgroundColor="White"
                 TextColor="Black"/>
-        <Button Text="Lập lịch"
-               
+        <Button Text="Lịch sử hoạt động"
+               Clicked="History_Clicked"
                 FontSize="18"
                 BackgroundColor="White"
                 TextColor="Black"/>

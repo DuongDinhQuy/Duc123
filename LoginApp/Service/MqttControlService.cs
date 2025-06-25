@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 using MQTT;
 
@@ -15,13 +16,13 @@ namespace LoginApp.Service
         public bool IsConnected { get; private set; } = false;
 
         public MQTTControlService(
-            string userId,
+            string userId = "1", // Luôn là "1" cho khớp với espID trên phần cứng
             string brokerAddress = "broker.emqx.io",
             int brokerPort = 8883,
             string clientId = "maui-control-client")
         {
-            // Kênh điều khiển: "UserId/Device"
-            controlTopic = $"{userId}/Device";
+            // Kênh điều khiển luôn là "1/device" cho khớp với String espID="1"
+            controlTopic = "1/device";
 
             mqttClient = new MQTTDeviceClient(
                 brokerAddress: brokerAddress,
@@ -64,7 +65,7 @@ namespace LoginApp.Service
             }
         }
 
-        // Gửi lệnh đến thiết bị (pump, light, ...)
+        // Gửi lệnh đến thiết bị (pump, light, valve)
         public async Task SendDeviceCommandAsync(string cmd, bool state)
         {
             if (!IsConnected)
@@ -72,11 +73,19 @@ namespace LoginApp.Service
 
             try
             {
-                // value: 1 (on), 0 (off)
-                await mqttClient.SendCommandAsync(cmd, state ? 1 : 0);
+                var payload = new
+                {
+                    cmd = cmd.ToUpper(), // ESP32 dùng "PUMP", "LIGHT"
+                    value = state ? 1 : 0
+                };
+                string json = JsonSerializer.Serialize(payload);
 
-                Console.WriteLine($"[MQTTControlService] Đã gửi lệnh {cmd}: {(state ? "ON" : "OFF")}");
-                OnCommandSent?.Invoke($"{cmd}: {(state ? "ON" : "OFF")}");
+                // Đúng hàm publish: sử dụng mqttClient.SendCommandAsync (đã có trong MQTTDeviceClient)
+                // Lưu ý: SendCommandAsync(string cmd, int value) sẽ tự serialize đúng JSON và gửi lên topic controlTopic
+                await mqttClient.SendCommandAsync(cmd.ToUpper(), state ? 1 : 0);
+
+                Console.WriteLine($"[MQTTControlService] Đã gửi lệnh: {json}");
+                OnCommandSent?.Invoke(json);
             }
             catch (Exception ex)
             {

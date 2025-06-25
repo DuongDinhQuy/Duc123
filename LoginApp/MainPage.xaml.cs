@@ -3,42 +3,61 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
-using LoginApp.Service;
 
 namespace LoginApp
 {
     public partial class MainPage : ContentPage
     {
-        private MQTTService _mqttService;
-
         public MainPage()
         {
             InitializeComponent();
-            InitMqtt();
+            FakeSensorData();
         }
 
-        private async void InitMqtt()
+        /// <summary>
+        /// Hàm fake dữ liệu cảm biến và cập nhật UI liên tục mỗi 2 giây
+        /// </summary>
+        private async void FakeSensorData()
         {
-            // Giả sử GlobalUserId được gán sau khi đăng nhập thành công
-            _mqttService = new MQTTService(Globals.GlobalUserId);
-            _mqttService.SensorDataReceived += MqttService_SensorDataReceived;
-            await _mqttService.StartAsync(); // Kết nối MQTT
-        }
+            // Giá trị cố định
+            double fakeTemp = 45.0; // Nhiệt độ cao bất thường
+            double fakeHumidity = 78.0;
+            double fakeWater = 100.0;
 
-        private async void MqttService_SensorDataReceived(object? sender, SensorDataEventArgs e)
-        {
-            // Cập nhật UI
-            MainThread.BeginInvokeOnMainThread(() =>
+            while (true)
             {
-                TemperatureLabel.Text = e.Temperature.HasValue ? e.Temperature.Value.ToString("F1") : "--";
-                HumidityLabel.Text = e.Humidity.HasValue ? e.Humidity.Value.ToString("F1") : "--";
-                WaterLevelLabel.Text = e.WaterLevel.HasValue ? e.WaterLevel.Value.ToString("F2") : "--";
-            });
+                var args = new SensorDataEventArgs
+                {
+                    Temperature = fakeTemp,
+                    Humidity = fakeHumidity,
+                    WaterLevel = fakeWater
+                };
 
-            // Gửi dữ liệu SensorData lên server
-            await PostSensorDataToServer(e);
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    TemperatureLabel.Text = args.Temperature.HasValue ? args.Temperature.Value.ToString("F1") : "--";
+                    HumidityLabel.Text = args.Humidity.HasValue ? args.Humidity.Value.ToString("F1") : "--";
+                    WaterLevelLabel.Text = args.WaterLevel.HasValue ? args.WaterLevel.Value.ToString("F2") : "--";
+
+                    // Nếu nhiệt độ quá cao, hiện cảnh báo
+                    if (args.Temperature.HasValue && args.Temperature.Value >= 45)
+                    {
+                        // Hiện cảnh báo, chỉ hiện 1 lần mỗi chu kỳ
+                        Application.Current?.MainPage?.DisplayAlert(
+                            "CẢNH BÁO NHIỆT ĐỘ",
+                            "Nhiệt độ quá cao, cần kiểm tra lại vườn!",
+                            "Đã hiểu"
+                        );
+                    }
+                });
+
+                await PostSensorDataToServer(args);
+
+                await Task.Delay(2000);
+            }
         }
 
+        // Đã loại bỏ hoàn toàn các thông báo lỗi
         private async Task PostSensorDataToServer(SensorDataEventArgs sensor)
         {
             try
@@ -53,20 +72,16 @@ namespace LoginApp
                     Time = DateTime.UtcNow
                 };
 
-                // Chỉnh lại base URL cho đúng server của bạn!
-                var response = await httpClient.PostAsJsonAsync("https://your-server-url/api/SensorData", sensorData);
-                response.EnsureSuccessStatusCode();
+                await httpClient.PostAsJsonAsync("https://1ffc-2001-ee0-4161-2458-f59b-22cf-a5a0-7ee0.ngrok-free.app/api/SensorData", sensorData);
+                // Không hiện thông báo nào cả dù lỗi hay thành công
             }
-            catch (Exception ex)
+            catch
             {
-                // Có thể log lỗi hoặc hiển thị thông báo nếu cần
+                // Bỏ qua tất cả lỗi, không hiện bất kỳ thông báo nào
             }
         }
     }
 
-    
-
-    // Định nghĩa EventArgs nếu file MQTTService của bạn chưa có:
     public class SensorDataEventArgs : EventArgs
     {
         public double? Temperature { get; set; }

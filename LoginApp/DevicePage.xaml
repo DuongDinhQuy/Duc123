@@ -1,0 +1,26 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LoginApp.DevicePage"
+             Title="Điều khiển thiết bị">
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="24">
+            <Label Text="Thiết bị điều khiển" FontSize="24" HorizontalOptions="Center" Margin="0,0,0,12"/>
+            <Frame BorderColor="Gray" CornerRadius="10" Padding="10" BackgroundColor="WhiteSmoke">
+                <VerticalStackLayout Spacing="10">
+                    <Button x:Name="PumpButton"
+                            Text="Bật Bơm"
+                            BackgroundColor="LightGreen"
+                            Clicked="OnPumpButtonClicked"/>
+                    <Button x:Name="LightButton"
+                            Text="Bật Đèn"
+                            BackgroundColor="LightBlue"
+                            Clicked="OnLightButtonClicked"/>
+                    <Button x:Name="ValveButton"
+                            Text="Bật Van Nước"
+                            BackgroundColor="LightSkyBlue"
+                            Clicked="OnValveButtonClicked"/>
+                </VerticalStackLayout>
+            </Frame>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

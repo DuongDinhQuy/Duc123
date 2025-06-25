@@ -15,15 +15,15 @@ namespace LoginApp
             await Navigation.PushAsync(new MainPage());
         }
 
-        /*private async void OnDeviceControlClicked(object sender, EventArgs e)
+        private async void OnDeviceControlClicked(object sender, EventArgs e)
         {
             await Navigation.PushAsync(new DevicePage());
         }
 
-        private async void Time_Clicked(object sender, EventArgs e)
+        private async void History_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new TimePage());
-        }*/
+            await Navigation.PushAsync(new HistoryPage());
+        }
 
         private async void OnBackClicked(object sender, EventArgs e)
         {

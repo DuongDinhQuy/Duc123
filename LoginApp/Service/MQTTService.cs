@@ -22,7 +22,7 @@ namespace LoginApp.Service
             string clientId = "maui-client")
         {
             // Kênh cảm biến: "UserId/Sensor"
-            string topic = $"{userId}/Sensor";
+            string topic = $"{Globals.GlobalUserId}/Sensor";
 
             client = new MQTTDeviceClient(
                 brokerAddress: brokerAddress,
